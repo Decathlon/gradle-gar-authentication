@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -39,6 +41,11 @@ dependencies {
 group = "com.decathlon.gradle"
 version = "0.1.0-alpha01"
 val releaseVersion = version.toString().endsWith("-SNAPSHOT").not()
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 gradlePlugin {
     website = "https://github.com/Decathlon/gradle-gar-authentication"
