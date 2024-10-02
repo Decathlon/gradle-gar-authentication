@@ -53,4 +53,7 @@ this plugin. The purpose of this plugin is to bind the local gcloud cli to gradl
 repositories from your project. The content itself of the authentication data it up to the Google
 Cloud admin from your organisation.
 
-Running on a CI machine requires the `SERVICE_ACCOUNT_JSON` environment variable.
+When running on a CI machine the file `no-permission-service-account.json` is used as a service
+account. When running on your local machine, `gcloud auth login` will be called so your web browser
+will open a page and it will ask you to authenticate. Some tests requires you to log-in
+successfully, some not, check the log and follow the instructions.

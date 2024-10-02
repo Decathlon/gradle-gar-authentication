@@ -8,6 +8,8 @@ import org.gradle.kotlin.dsl.repositories
 import org.gradle.testfixtures.ProjectBuilder
 import java.io.BufferedReader
 import java.io.File
+import java.nio.file.Files.copy
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -70,9 +72,14 @@ internal class AuthenticatedGarCliPluginTest {
     }
 
     private fun authenticateWithServiceAccount() {
-        lateinit var errorReader: BufferedReader
         File.createTempFile("service-account", "json")
-            .apply { writeText(System.getenv("SERVICE_ACCOUNT_JSON")) }
+            .also {
+                copy(
+                    javaClass.classLoader.getResourceAsStream("no-permission-service-account.json")!!,
+                    it.toPath(),
+                    REPLACE_EXISTING
+                )
+            }
             .let { serviceAccount ->
                 ProcessBuilder(
                     "gcloud",
@@ -82,12 +89,13 @@ internal class AuthenticatedGarCliPluginTest {
                 )
             }
             .start()
-            .apply { errorReader = errorReader() }
-            .waitFor()
-            .also {
-                if (it != 0)
+            .run {
+                val errorReader = errorReader()
+                waitFor() to errorReader
+            }
+            .also { (errorCode, errorReader) ->
+                if (errorCode != 0)
                     throw RuntimeException("Failed to authenticate with file, error logs: ${errorReader.readText()}")
             }
     }
-
 }
