@@ -16,7 +16,9 @@ This plugin was tested on windows and linux/macos.
 Apply the plugin into a `settings.gradle.kts` file like this:
 
 ```kotlin
-// Put this code at the beginning of the file
+// Put this code at the beginning of the settings.gradle.kts file
+import com.decathlon.android.gradle.authenticatedgarcli.garCliCredentials
+
 plugins {
     id("com.decathlon.gradle.authenticated-gar-cli")
 }
@@ -48,7 +50,7 @@ the configuration phase and continue its execution.
   starting gradle or
   an [other login method](https://cloud.google.com/sdk/gcloud/reference/auth/login)
 * Only works with `settings.gradle.kts` files
-* `garCredential` method is a Kotlin extension to be used with gradle kts, groovy code was not
+* `garCliCredentials` method is a Kotlin extension to be used with gradle kts, groovy code was not
   tested
 
 ## Help

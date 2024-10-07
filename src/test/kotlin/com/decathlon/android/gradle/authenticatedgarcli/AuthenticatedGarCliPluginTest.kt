@@ -8,6 +8,9 @@ import org.gradle.kotlin.dsl.repositories
 import org.gradle.testfixtures.ProjectBuilder
 import java.io.BufferedReader
 import java.io.File
+import java.nio.file.Files.copy
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -15,6 +18,7 @@ import kotlin.test.assertFailsWith
  * Theses test were designed to run on the C.I. but you can run them on your local machine. When
  * running on your local machine, follow the instruction sent into the standard output.
  */
+@Ignore("Unable to run theses tests because no service account was configured yet")
 internal class AuthenticatedGarCliPluginTest {
 
     private fun test() = with(ProjectBuilder.builder().build()) {
@@ -70,9 +74,14 @@ internal class AuthenticatedGarCliPluginTest {
     }
 
     private fun authenticateWithServiceAccount() {
-        lateinit var errorReader: BufferedReader
         File.createTempFile("service-account", "json")
-            .apply { writeText(System.getenv("SERVICE_ACCOUNT_JSON")) }
+            .also {
+                copy(
+                    javaClass.classLoader.getResourceAsStream("no-permission-service-account.json")!!,
+                    it.toPath(),
+                    REPLACE_EXISTING
+                )
+            }
             .let { serviceAccount ->
                 ProcessBuilder(
                     "gcloud",
@@ -82,12 +91,13 @@ internal class AuthenticatedGarCliPluginTest {
                 )
             }
             .start()
-            .apply { errorReader = errorReader() }
-            .waitFor()
-            .also {
-                if (it != 0)
+            .run {
+                val errorReader = errorReader()
+                waitFor() to errorReader
+            }
+            .also { (errorCode, errorReader) ->
+                if (errorCode != 0)
                     throw RuntimeException("Failed to authenticate with file, error logs: ${errorReader.readText()}")
             }
     }
-
 }
