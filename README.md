@@ -20,7 +20,7 @@ Apply the plugin into a `settings.gradle.kts` file like this:
 import com.decathlon.android.gradle.authenticatedgarcli.garCliCredentials
 
 plugins {
-    id("com.decathlon.gradle.authenticated-gar-cli")
+    id("com.decathlon.gradle.authenticated-gar-cli") version "<latest-version>"
 }
 ```
 
