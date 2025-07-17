@@ -45,7 +45,7 @@ internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
         // As consequence for this, the returned value for the method `obtain()` will be different
         // for every build which breaks configuration cache and slow down the build process.
         constructor(source: JsonObject) : this(
-            source["token"]!!.jsonPrimitive.toString(),
+            source["token"]!!.jsonPrimitive.content,
             source["valid"]!!.jsonPrimitive.boolean,
             source["expired"]!!.jsonPrimitive.boolean,
         )
