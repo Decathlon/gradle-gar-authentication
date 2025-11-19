@@ -44,7 +44,7 @@ internal abstract class CliPath : ValueSource<Optional<String>, ValueSourceParam
 
     @Suppress("FunctionName")
     companion object {
-        fun Parent.CliPath(): Provider<Optional<String>> = providers
+        fun Host.CliPath(): Provider<Optional<String>> = providers
             .of(CliPath::class.java) {}
     }
 }

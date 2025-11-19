@@ -8,7 +8,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.gradle.api.initialization.Settings
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
@@ -53,7 +52,7 @@ internal abstract class LoggedUser : ValueSource<Optional<String>, Parameters> {
 
     @Suppress("FunctionName")
     companion object {
-        fun Parent.LoggedUser(cliPath: Provider<String>): Provider<Optional<String>> = providers
+        fun Host.LoggedUser(cliPath: Provider<String>): Provider<Optional<String>> = providers
             .of(LoggedUser::class.java) { parameters { this.cliPath = cliPath } }
     }
 }
