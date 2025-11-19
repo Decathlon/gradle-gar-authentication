@@ -53,7 +53,7 @@ internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
 
     @Suppress("FunctionName")
     companion object {
-        fun Parent.FetchAuthentication(
+        fun Host.FetchAuthentication(
             cliPath: Provider<String>,
             loggedUser: Provider<String>,
         ): Provider<Data> = providers.of(FetchAuthentication::class.java) {
@@ -63,7 +63,7 @@ internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
             }
         }
 
-        fun Parent.FetchAuthentication(
+        fun Host.FetchAuthentication(
             cliPath: Provider<String>,
             loggedUser: String,
         ): Provider<Data> = providers.of(FetchAuthentication::class.java) {

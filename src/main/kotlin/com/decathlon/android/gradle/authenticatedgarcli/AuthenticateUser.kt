@@ -30,7 +30,7 @@ internal abstract class AuthenticateUser : ValueSource<Unit, Parameters> {
 
     @Suppress("FunctionName")
     companion object {
-        fun Parent.AuthenticateUser(cliPath: Provider<String>): Provider<Unit> = providers
+        fun Host.AuthenticateUser(cliPath: Provider<String>): Provider<Unit> = providers
             .of(AuthenticateUser::class.java) { parameters.cliPath = cliPath }
     }
 }
