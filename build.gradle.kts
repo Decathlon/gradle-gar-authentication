@@ -39,7 +39,7 @@ dependencies {
 }
 
 group = "com.decathlon.gradle"
-version = "0.1.0-alpha04"
+version = "0.1.0-alpha05"
 val releaseVersion = version.toString().endsWith("-SNAPSHOT").not()
 
 java {
