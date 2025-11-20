@@ -1,5 +1,6 @@
 package com.decathlon.android.gradle.authenticatedgarcli
 
+import com.decathlon.android.gradle.authenticatedgarcli.AuthenticatedGarCliPlugin.Companion.logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
@@ -40,11 +41,12 @@ internal abstract class CliPath : ValueSource<Optional<String>, ValueSourceParam
             else
                 paths
         }
+        .also {
+            if (it != null) {
+                logger.info("\"gcloud\" CLI path: \"$it\"")
+            } else {
+                logger.info("\"gcloud CLI path not found\"")
+            }
+        }
         .let { Optional.ofNullable(it) }
-
-    @Suppress("FunctionName")
-    companion object {
-        fun Host.CliPath(): Provider<Optional<String>> = providers
-            .of(CliPath::class.java) {}
-    }
 }

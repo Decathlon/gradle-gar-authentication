@@ -13,14 +13,6 @@ internal fun ExecSpec.commandLineMultiplatform(vararg args: Any) {
     else commandLine(*args)
 }
 
-internal inline fun <reified T : Any> Provider<Optional<T>>.unwrap(crossinline lazyMessage: () -> Any): Provider<T> = map {
-    it.orElseThrow { GradleException(lazyMessage().toString()) }
-}
-
-internal inline fun <reified T : Any> Provider<Optional<T>>.unwrap(): Provider<T> = map {
-    it.orElseThrow { throw GradleException() }
-}
-
 internal inline operator fun <reified T> Provider<T>.getValue(thisRef: Any?, property: KProperty<*>): T = get()
 
 @JvmName("getValueOptional")

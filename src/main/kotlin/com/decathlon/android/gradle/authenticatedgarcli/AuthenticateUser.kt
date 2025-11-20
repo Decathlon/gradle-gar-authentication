@@ -1,6 +1,7 @@
 package com.decathlon.android.gradle.authenticatedgarcli
 
 import com.decathlon.android.gradle.authenticatedgarcli.AuthenticateUser.Parameters
+import com.decathlon.android.gradle.authenticatedgarcli.AuthenticatedGarCliPlugin.Companion.logger
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -24,13 +25,10 @@ internal abstract class AuthenticateUser : ValueSource<Unit, Parameters> {
             commandLineMultiplatform(parameters.cliPath.get(), "auth", "login")
             isIgnoreExitValue = true
         }.let { execResult ->
-            if (execResult.exitValue != 0)
+            if (execResult.exitValue != 0) {
                 throw GradleException("Failed to login the gcloud cli")
+            } else {
+                logger.info("Authentication successful")
+            }
         }
-
-    @Suppress("FunctionName")
-    companion object {
-        fun Host.AuthenticateUser(cliPath: Provider<String>): Provider<Unit> = providers
-            .of(AuthenticateUser::class.java) { parameters.cliPath = cliPath }
-    }
 }

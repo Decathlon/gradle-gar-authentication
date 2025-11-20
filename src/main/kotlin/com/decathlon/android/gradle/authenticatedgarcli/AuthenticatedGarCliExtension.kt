@@ -1,13 +1,12 @@
 package com.decathlon.android.gradle.authenticatedgarcli
 
-import com.decathlon.android.gradle.authenticatedgarcli.FetchAuthentication.Data
 import org.gradle.api.artifacts.repositories.AuthenticationSupported
+import org.gradle.api.provider.Provider
 
 public abstract class AuthenticatedGarCliExtension internal constructor(
-    private val authData: Data,
+    token: Provider<String>,
 ) {
-    public val token: String
-        get() = authData.token
+    public val token: String by token
 
     public fun garCliCredentials(authenticationSupported: AuthenticationSupported): Unit =
         authenticationSupported.credentials {

@@ -1,5 +1,6 @@
 package com.decathlon.android.gradle.authenticatedgarcli
 
+import com.decathlon.android.gradle.authenticatedgarcli.AuthenticatedGarCliPlugin.Companion.logger
 import com.decathlon.android.gradle.authenticatedgarcli.LoggedUser.Parameters
 import java.io.ByteArrayOutputStream
 import java.util.Optional
@@ -48,11 +49,9 @@ internal abstract class LoggedUser : ValueSource<Optional<String>, Parameters> {
         ?.get("account")
         ?.jsonPrimitive
         ?.content
+        .also {
+            if (it != null) logger.info("Logged user: $it")
+            else logger.info("No user logged")
+        }
         .let { Optional.ofNullable(it) }
-
-    @Suppress("FunctionName")
-    companion object {
-        fun Host.LoggedUser(cliPath: Provider<String>): Provider<Optional<String>> = providers
-            .of(LoggedUser::class.java) { parameters { this.cliPath = cliPath } }
-    }
 }

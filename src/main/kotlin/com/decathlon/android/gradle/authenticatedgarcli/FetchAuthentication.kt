@@ -1,5 +1,6 @@
 package com.decathlon.android.gradle.authenticatedgarcli
 
+import com.decathlon.android.gradle.authenticatedgarcli.AuthenticatedGarCliPlugin.Companion.logger
 import com.decathlon.android.gradle.authenticatedgarcli.FetchAuthentication.Data
 import com.decathlon.android.gradle.authenticatedgarcli.FetchAuthentication.Parameters
 import kotlinx.serialization.json.Json
@@ -36,6 +37,7 @@ internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
         }
         .let { Json.decodeFromString<JsonObject>(it) }
         .let(::Data)
+        .also { logger.info("Authentification data fetch: $it") }
 
     data class Data(val token: String, val valid: Boolean, val expired: Boolean) {
         // `source` contains much more data than `valid`, `expired` or `token` but only theses
@@ -49,28 +51,5 @@ internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
             source["valid"]!!.jsonPrimitive.boolean,
             source["expired"]!!.jsonPrimitive.boolean,
         )
-    }
-
-    @Suppress("FunctionName")
-    companion object {
-        fun Host.FetchAuthentication(
-            cliPath: Provider<String>,
-            loggedUser: Provider<String>,
-        ): Provider<Data> = providers.of(FetchAuthentication::class.java) {
-            parameters {
-                this.cliPath = cliPath
-                this.user = loggedUser
-            }
-        }
-
-        fun Host.FetchAuthentication(
-            cliPath: Provider<String>,
-            loggedUser: String,
-        ): Provider<Data> = providers.of(FetchAuthentication::class.java) {
-            parameters {
-                this.cliPath = cliPath
-                this.user = loggedUser
-            }
-        }
     }
 }
