@@ -14,9 +14,10 @@ import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.kotlin.dsl.assign
 import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
+import java.util.Optional
 import javax.inject.Inject
 
-internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
+internal abstract class FetchAuthentication : ValueSource<Optional<Data>, Parameters> {
 
     interface Parameters : ValueSourceParameters {
         val cliPath: Property<String>
@@ -26,18 +27,24 @@ internal abstract class FetchAuthentication : ValueSource<Data, Parameters> {
     @get:Inject
     protected abstract val execOperations: ExecOperations
 
-    override fun obtain(): Data = ByteArrayOutputStream()
+    override fun obtain(): Optional<Data> = ByteArrayOutputStream()
         .use { output ->
             execOperations.exec {
                 commandLineMultiplatform(parameters.cliPath.get(), "auth", "describe", parameters.user.get())
                 args("--format", "json")
                 standardOutput = output
+            }.also { execResult ->
+                if (execResult.exitValue != 0) {
+                    logger.info("Failed to run auth describe command")
+                    return Optional.empty()
+                }
             }
             output.toString()
         }
         .let { Json.decodeFromString<JsonObject>(it) }
         .let(::Data)
         .also { logger.info("Authentification data fetch: $it") }
+        .let(Optional<Data>::of)
 
     data class Data(val token: String, val valid: Boolean, val expired: Boolean) {
         // `source` contains much more data than `valid`, `expired` or `token` but only theses

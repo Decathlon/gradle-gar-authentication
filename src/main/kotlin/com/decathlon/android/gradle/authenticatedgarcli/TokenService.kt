@@ -52,6 +52,7 @@ internal abstract class TokenService : BuildService<BuildServiceParameters.None>
             }
         }
         ?.get()
+        ?.getOrNull()
         ?.takeIf { it.valid && it.expired.not() }
         ?.token
         ?: if (isCI) {
@@ -74,6 +75,7 @@ internal abstract class TokenService : BuildService<BuildServiceParameters.None>
                     }
                 }
                 .get()
+                .getOrElse { throw GradleException("User logged successfully but failed to fetch authentication data") }
                 .token
         }
 }
