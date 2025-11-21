@@ -4,10 +4,8 @@ import com.decathlon.android.gradle.authenticatedgarcli.AuthenticateUser.Paramet
 import com.decathlon.android.gradle.authenticatedgarcli.AuthenticatedGarCliPlugin.Companion.logger
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.gradle.kotlin.dsl.assign
 import org.gradle.process.ExecOperations
 import javax.inject.Inject
 
@@ -20,15 +18,15 @@ internal abstract class AuthenticateUser : ValueSource<Unit, Parameters> {
     @get:Inject
     protected abstract val execOperations: ExecOperations
 
-    override fun obtain(): Unit? = execOperations
+    override fun obtain(): Unit = execOperations
         .exec {
             commandLineMultiplatform(parameters.cliPath.get(), "auth", "login")
             isIgnoreExitValue = true
-        }.let { execResult ->
-            if (execResult.exitValue != 0) {
-                throw GradleException("Failed to login the gcloud cli")
-            } else {
+        }.let { result ->
+            if (result.exitValue == 0) {
                 logger.info("Authentication successful")
+            } else {
+                throw GradleException("Failed to login the gcloud cli")
             }
         }
 }

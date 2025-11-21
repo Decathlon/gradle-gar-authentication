@@ -5,7 +5,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.kotlin.dsl.assign
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem
 import javax.inject.Inject
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
@@ -16,27 +15,7 @@ internal abstract class TokenService : BuildService<BuildServiceParameters.None>
     abstract val providers: ProviderFactory
 
     private val isCI by providers.environmentVariable("CI").orElse("false").map { it == "true" }
-    private val cliPath = providers.of(CliPath::class.java) {}.map {
-        it.getOrNull()
-            ?: throw GradleException(
-                with(getCurrentOperatingSystem()) {
-                    when {
-                        isWindows -> "winget install Google.CloudSDK"
-                        isMacOsX -> "brew install google-cloud-sdk"
-                        isLinux -> "apt-get install google-cloud-cli"
-                        else -> null
-                    }
-                }.let { installationCmd ->
-                    StringBuilder("The current machine doesn't have the gcloud CLI installed, ")
-                        .apply {
-                            if (installationCmd != null)
-                                append("please run \"$installationCmd\" and")
-                        }
-                        .append(" check the CLI is available in your IDE path")
-                        .toString()
-                }
-            )
-    }
+    private val cliPath = providers.of(CliPath::class.java) {}
 
     //
     val token = providers

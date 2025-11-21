@@ -6,7 +6,6 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.testfixtures.ProjectBuilder
-import java.io.BufferedReader
 import java.io.File
 import java.nio.file.Files.copy
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING

@@ -8,10 +8,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.gradle.kotlin.dsl.assign
 import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
 import java.util.Optional
@@ -30,11 +28,17 @@ internal abstract class FetchAuthentication : ValueSource<Optional<Data>, Parame
     override fun obtain(): Optional<Data> = ByteArrayOutputStream()
         .use { output ->
             execOperations.exec {
-                commandLineMultiplatform(parameters.cliPath.get(), "auth", "describe", parameters.user.get())
+                commandLineMultiplatform(
+                    parameters.cliPath.get(),
+                    "auth",
+                    "describe",
+                    parameters.user.get()
+                )
                 args("--format", "json")
+                isIgnoreExitValue = true
                 standardOutput = output
-            }.also { execResult ->
-                if (execResult.exitValue != 0) {
+            }.also { result ->
+                if (result.exitValue != 0) {
                     logger.info("Failed to run auth describe command")
                     return Optional.empty()
                 }

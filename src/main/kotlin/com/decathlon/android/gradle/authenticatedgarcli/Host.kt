@@ -37,8 +37,8 @@ internal sealed interface Host : PluginAware, ExtensionAware {
     @JvmInline
     value class Settings(val source: org.gradle.api.initialization.Settings) : Host,
         org.gradle.api.initialization.Settings by source {
-        override fun include(vararg projectPaths: String?) = source.include(*projectPaths)
-        override fun includeFlat(vararg projectNames: String?) = source.includeFlat(*projectNames)
+        override fun include(vararg projectPaths: String) = source.include(*projectPaths)
+        override fun includeFlat(vararg projectNames: String) = source.includeFlat(*projectNames)
     }
 
     @JvmInline
