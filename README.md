@@ -49,7 +49,6 @@ the configuration phase and continue its execution.
   run `gcloud auth activate-service-account --key-file=/path/to/service-account.json` before
   starting gradle or
   an [other login method](https://cloud.google.com/sdk/gcloud/reference/auth/login)
-* Only works with `settings.gradle.kts` files
 * `garCliCredentials` method is a Kotlin extension to be used with gradle kts, groovy code was not
   tested
 
