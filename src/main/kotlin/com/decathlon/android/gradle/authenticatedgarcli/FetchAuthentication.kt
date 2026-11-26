@@ -50,17 +50,26 @@ internal abstract class FetchAuthentication : ValueSource<Optional<Data>, Parame
         .also { logger.info("Authentification data fetch: $it") }
         .let(Optional<Data>::of)
 
-    data class Data(val token: String, val valid: Boolean, val expired: Boolean) {
-        // `source` contains much more data than `valid`, `expired` or `token` but only theses
-        // three are required for the plugin
-        // Do not use `source` as a field property for `Data` because each time
-        // `gcloud auth describe` is called the returned json is different from the previous.
-        // As consequence for this, the returned value for the method `obtain()` will be different
-        // for every build which breaks configuration cache and slow down the build process.
+    class Data(val token: String, val valid: Boolean, val expired: Boolean) {
+        // `source` contains much more data than `valid`, `expired` or `token` but only these
+        // three are required for the plugin.
+        // `token` is intentionally excluded from `equals` and `hashCode`: OAuth access tokens
+        // rotate periodically (and on every CI runner), which would otherwise invalidate the
+        // Gradle configuration cache on every build even when authentication remains valid.
         constructor(source: JsonObject) : this(
             source["token"]!!.jsonPrimitive.content,
             source["valid"]!!.jsonPrimitive.boolean,
             source["expired"]!!.jsonPrimitive.boolean,
         )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Data) return false
+            return valid == other.valid && expired == other.expired
+        }
+
+        override fun hashCode(): Int = 31 * valid.hashCode() + expired.hashCode()
+
+        override fun toString(): String = "Data(valid=$valid, expired=$expired)"
     }
 }
